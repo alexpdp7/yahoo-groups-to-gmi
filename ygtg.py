@@ -13,6 +13,8 @@ from warcio import archiveiterator
 def warc_to_gmi(warc_path, out_path: pathlib.Path):
     shutil.rmtree(out_path, ignore_errors=True)
 
+    index = {}
+
     with open(warc_path, 'rb') as stream:
         for record in archiveiterator.ArchiveIterator(stream):
             if record.rec_headers["WARC-Target-URI"].endswith("info"):
@@ -51,6 +53,13 @@ def warc_to_gmi(warc_path, out_path: pathlib.Path):
                 """))
                 f.write(body.strip())
                 f.write("\n```\n")
+
+            index[int(num)] = f"=> {num}/ {date} - {from_} - {subject}"
+
+    with open(out_path / "index.gmi", "w") as f:
+        for i in range(1, max(index.keys()) + 1):
+            if i in index:
+                f.write(index[i] + "\n")
 
 
 def main(argv):
