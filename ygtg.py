@@ -34,7 +34,7 @@ def warc_to_gmi(warc_path, out_path: pathlib.Path):
                 decoded_headers = email.header.decode_header(parsed_mail.get("Subject"))
                 for decoded_header in decoded_headers:
                     s, enc = decoded_header
-                    subject += s.decode(enc) if enc else str(s)
+                    subject += s.decode(enc) if enc else (s.decode("utf8") if type(s) == bytes else s)
             else:
                 subject = "Unknown"
 
